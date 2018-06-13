@@ -1,0 +1,12 @@
+#!/bin/sh
+
+echo "Starting Elastic Search Server from $ELASTIC_HOME"
+cd $ELASTIC_HOME/bin
+./elasticsearch -Des.network.host=0.0.0.0 -Des.cluster.name=demo-cluster -Des.bootstrap.memory_lock=true -Des.http.port=9200
+
+echo "sleeping for 10 seconds"
+sleep 10
+
+echo "Startup complete"
+
+curl http://0.0.0.0:9200/_nodes/_all/process?pretty=true

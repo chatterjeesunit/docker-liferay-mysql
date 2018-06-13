@@ -7,3 +7,4 @@ Involves following application
  - Elastic Search 2.4.6
  
  Work in Progress
+docker run -d -u user -p 9200:9200 -p 9300:9300 liferay-7.0-ga5
