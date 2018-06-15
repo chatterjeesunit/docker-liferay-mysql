@@ -31,10 +31,12 @@ Details about the application
 How to Use this Image
 --------------------------------
 > First you need to build the Image from the given _DockerFiler_
+
 > All the commands given below assume that _liferay_ is the name of the container.
 
 #### Create a new container
 `docker run -d --name liferay liferay:7.0-GA5 `
+
 where _liferay:7.0-GA5_ is the image name and version
 
 #### Stopping the container
@@ -61,6 +63,7 @@ e.g http://172.17.0.2:8080
 
 #### Connect to MySql Server inside the container
 `mysql -h <Docker IP Address> -u root -p`
+
 e.g `mysql -h 172.17.0.2 -u root -p`
 
 
@@ -72,8 +75,10 @@ Deploying custom OSGI Jars / Config / Properties to Liferay container
 > All the commands given below assume that _liferay_ is the name of the container.
 
 #### Deploying a single OSGI Jar to Liferay container
+
 + Make sure your liferay container is running
 + Run below command
+
 `docker cp *.jar liferay:/home/user/Tools/liferay-ce-portal-7.0-ga5/`
 
 #### Deploying OSGI Jars (zip file option)
@@ -81,15 +86,20 @@ Deploying custom OSGI Jars / Config / Properties to Liferay container
   + Name of zip file should be : *osgi_jars.zip*
   + Make sure the zip file only has files and no folder structure within it
 + Run following command to copy the zip file to container's liferay base folder
+
 `docker cp osgi_jars.zip liferay:/home/user/Tools/liferay-ce-portal-7.0-ga5/`
+
 + Restart docker container
 + When you start it, the startup script automatically unzips the OSGI jar files in the deploy folder for automatic deployment
 
 
 #### Deploying custom property files
 + There are scenarios where we want to modify the default properties. e.g _portal-ext.properties_
+
 + Copy the property file to the docker container with below command
+
 `docker cp portal-ext.properties liferay:/home/user/Tools/liferay-ce-portal-7.0-ga5/`
+
 + Restart the docker container
 
 #### Deploying multiple custom property / config files (zip file option)
@@ -100,19 +110,33 @@ Deploying custom OSGI Jars / Config / Properties to Liferay container
   + Name of file should be : _config.zip_
   + Keep base folder structure in zip file, relative to liferay base folder
 + Sample zip file content would be like
+
   |_ portal-ext.properties
+
   |_ portal-setup-wizard.properties
+
   |_ osgi
+
      |_configs
-         |_com.liferay.portal.bundle.blacklist.internal.BundleBlacklistConfiguration
-         |_com.liferay.portal.search.elasticsearch.configuration.ElasticsearchConfiguration.config
+
+       |_com.liferay.portal.bundle.blacklist.internal.BundleBlacklistConfiguration
+
+       |_com.liferay.portal.search.elasticsearch.configuration.ElasticsearchConfiguration.config
+
   |_ tomcat-8.0.32
+
      |_ ROOT
-         |_ WEB-INF
-            |_ classes
-                |_ log4j.properties
+
+       |_ WEB-INF
+
+         |_ classes
+         
+            |_ log4j.properties                
+
 + Copy this zip file to container's base liferay folder
+
 `docker cp config.zip liferay:/home/user/Tools/liferay-ce-portal-7.0-ga5/`
+
 + Restart docker container
 + When you start it, the startup script automatically unzips and deploys the config files
 
