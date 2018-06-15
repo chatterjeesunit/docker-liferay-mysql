@@ -7,4 +7,10 @@ Involves following application
  - Elastic Search 2.4.6
  
  Work in Progress
-docker run -d -u user -p 9200:9200 -p 9300:9300 liferay-7.0-ga5
+
+docker build -t liferay:7.0-GA5 .
+
+
+run -d --name liferay-app liferay:7.0-GA5
+
+docker exec -it focused_ardinghelli tail -f /home/user/Tools/liferay-ce-portal-7.0-ga5/tomcat-8.0.32/logs/catalina.out
