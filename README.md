@@ -1,4 +1,7 @@
 
+Following is the link to the Docker Hub Image - https://hub.docker.com/r/chatterjeesunit/liferay/
+
+
 This docker file is for creating an Image of Liferay 7 application.
 This image is a full setup and ready to run image of **Liferay Community 7.0 GA5** application with following component
  * Liferay 7 GA5 Community Application server
