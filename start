@@ -3,7 +3,7 @@
 # If any custom OSGI jars need to be deployed
 # - zip the jar files with name as "osgi_jars.zip"
 # - don't keep any folder structure within the zip file
-# - Use docker cp command to copy the "osgi_jar.zip" file to $LIFERAY_HOME/osgi folder
+# - Use docker cp command to copy the "osgi_jars.zip" file to $LIFERAY_HOME/osgi folder
 # When the application will start next time, the script will extract the jar files to osgi deploy folder
 cd $LIFERAY_HOME
 echo 'Deploying Custom OSGI Jars to Liferay'
@@ -12,12 +12,18 @@ test -e osgi_jars.zip &&  unzip -o -d ./deploy/ osgi_jars.zip
 # If any custom properties need to be deployed, e.g custom portal-ext.properties, or osgi config files.
 # Create a zip of the properties file (with relative folder structure from Liferay base folder)
 # Example zip file content could be
-#   - portal-ext.properties
-#   - portal-setup-wizard.properties
-#   - osgi/configs/com.liferay.portal.bundle.blacklist.internal.BundleBlacklistConfiguration
-#   - osgi/configs/com.liferay.portal.search.elasticsearch.configuration.ElasticsearchConfiguration.config
-#   - tomcat-8.0.32/webapps/ROOT/WEB-INF/classes/log4j.properties
-#
+#   |_ portal-ext.properties
+#   |_ portal-setup-wizard.properties
+#   |_ osgi
+#      |_configs
+#         |_com.liferay.portal.bundle.blacklist.internal.BundleBlacklistConfiguration
+#         |_com.liferay.portal.search.elasticsearch.configuration.ElasticsearchConfiguration.config
+#   |_ tomcat-8.0.32
+#       |_ ROOT
+#         |_ WEB-INF
+#            |_ classes
+#                |_ log4j.properties
+##
 # Zip the property/config files as config.zip
 # Use docker cp command to copy the the "config.zip" file to $LIFERAY_HOME folder
 # When the application will start next time, the script will extract the config files into liferay base folder.
