@@ -5,7 +5,7 @@
 # - don't keep any folder structure within the zip file
 # - Use docker cp command to copy the "osgi_jar.zip" file to $LIFERAY_HOME/osgi folder
 # When the application will start next time, the script will extract the jar files to osgi deploy folder
-cd $LIFERAY_HOME/osgi
+cd $LIFERAY_HOME
 echo 'Deploying Custom OSGI Jars to Liferay'
 test -e osgi_jars.zip &&  unzip -o -d ./deploy/ osgi_jars.zip
 
