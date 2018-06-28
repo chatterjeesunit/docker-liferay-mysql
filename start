@@ -60,5 +60,9 @@ sh catalina.sh jpda start
 
 echo "Liferay is starting now in debug mode..."
 
+# Create .docx4all folder in user home directory
+# Without this the DOCX4J code was failing.
+sudo mkdir -p "/home/user/.docx4all/temporary embedded fonts"
+
 tail -f $LIFERAY_HOME/tomcat-8.0.32/logs/catalina.out
 
