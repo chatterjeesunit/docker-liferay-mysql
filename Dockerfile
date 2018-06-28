@@ -94,4 +94,4 @@ RUN \
 ENTRYPOINT ["start"]
 
 #Expose port 8080 of tomcat, port 3306 of mysql and port 9200, 9300 of elastic search
-EXPOSE 8080 3306 9200 9300
+EXPOSE 8080 3306 9200 9300 8000

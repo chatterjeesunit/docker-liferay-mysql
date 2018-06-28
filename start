@@ -49,9 +49,16 @@ echo "Starting Liferay Application now"
 cd $LIFERAY_HOME/tomcat-8.0.32/bin
 rm -f ../logs/catalina.out
 rm -f ../logs/*.log
-sh startup.sh
+#sh startup.sh
 
-echo "Liferay is starting now..."
+#Run in Debug Mode
+export JPDA_TRANSPORT="dt_socket"
+export JPDA_ADDRESS="8000"
+export JPDA_SUSPEND="n"
+export JPDA_OPTS="-agentlib:jdwp=transport=$JPDA_TRANSPORT,address=$JPDA_ADDRESS,server=y,suspend=$JPDA_SUSPEND"
+sh catalina.sh jpda start
+
+echo "Liferay is starting now in debug mode..."
 
 tail -f $LIFERAY_HOME/tomcat-8.0.32/logs/catalina.out
 
