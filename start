@@ -55,13 +55,21 @@ rm -f ../logs/catalina.out
 rm -f ../logs/*.log
 #sh startup.sh
 
+
+echo "Check if mysql is started, and if not then start it"
+until [ 0 = `sudo service mysql status | grep -cF 'MySQL is stopped'` ]
+do
+   echo "waiting for mysql to start"
+   sudo service mysql start   
+   sudo service mysql status
+done
+
 #Run in Debug Mode
-#export JPDA_TRANSPORT="dt_socket"
-#export JPDA_ADDRESS="8000"
-#export JPDA_SUSPEND="n"
-#export JPDA_OPTS="-agentlib:jdwp=transport=$JPDA_TRANSPORT,address=$JPDA_ADDRESS,server=y,suspend=$JPDA_SUSPEND"
-#sh catalina.sh jpda start
-sudo service liferay start
+export JPDA_TRANSPORT="dt_socket"
+export JPDA_ADDRESS="8000"
+export JPDA_SUSPEND="n"
+export JPDA_OPTS="-agentlib:jdwp=transport=$JPDA_TRANSPORT,address=$JPDA_ADDRESS,server=y,suspend=$JPDA_SUSPEND"
+sh catalina.sh jpda start
 
 echo "Liferay is starting now in debug mode..."
 

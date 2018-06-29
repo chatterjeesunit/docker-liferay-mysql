@@ -96,10 +96,8 @@ ENV JPDA_ADDRESS="8000"
 ENV JPDA_SUSPEND="n"
 ENV JPDA_OPTS="-agentlib:jdwp=transport=$JPDA_TRANSPORT,address=$JPDA_ADDRESS,server=y,suspend=$JPDA_SUSPEND"
 
-#Adding liferay as a service
-RUN \
-	sudo cp /home/user/Tools/scripts/liferay /etc/init.d/ \
-	&& sudo chmod +x /etc/init.d/liferay
+# Make liferay start / stop manual script as executable
+RUN sudo chmod +x /home/user/Tools/scripts/liferaytomcat
 
 
 ENTRYPOINT ["start"]

@@ -47,11 +47,11 @@ export TOMCAT_USER=user
 TOMCAT_USAGE="Usage: $0 {\e[00;32mstart\e[00m|\e[00;31mstop\e[00m|\e[00;31mkill\e[00m|\e[00;32mstatus\e[00m|\e[00;31mrestart\e[00m}"
  
 #SHUTDOWN_WAIT is wait time in seconds for java proccess to stop
-SHUTDOWN_WAIT=20
+SHUTDOWN_WAIT=30
  
 tomcat_pid() {
-		echo `ps -fe | grep "org.apache.catalina.startup.Bootstrap start" | grep -v grep | tr -s " "|cut -d" " -f2`
-        echo `ps -fe | grep $CATALINA_BASE | grep -v grep | tr -s " "|cut -d" " -f2`
+         echo `ps -fe | grep "org.apache.catalina.startup.Bootstrap start" | grep -v grep | tr -s " "|cut -d" " -f2`
+#        echo `ps -fe | grep $CATALINA_BASE | grep -v grep | tr -s " "|cut -d" " -f2`
 }
  
 start() {
@@ -62,17 +62,15 @@ start() {
   else
     # Start tomcat
     echo -e "\e[00;32mStarting Liferay\e[00m"
-    #ulimit -n 100000
-    #umask 007
-    #/bin/su -p -s /bin/sh $TOMCAT_USER
-        if [ `user_exists $TOMCAT_USER` = "1" ]
-        then
-                /bin/su $TOMCAT_USER -c $CATALINA_HOME/bin/catalina.sh jpda start
-        else
-                echo -e "\e[00;31mTomcat user $TOMCAT_USER does not exists. Starting with $(id)\e[00m"
-                sh $CATALINA_HOME/bin/catalina.sh jpda start
-        fi
-        status
+	echo -e "\e[00;32mCheck if mysql is started, and if not then start it\e[00m"
+	until [ 0 = `sudo service mysql status | grep -cF 'MySQL is stopped'` ]
+	do
+	   echo -e "\e[00;31mwaiting for mysql to start\e[00m"
+	   sudo service mysql start   
+	   sudo service mysql status
+	done
+    sh $CATALINA_HOME/bin/catalina.sh jpda start
+    status
   fi
   return 0
 }
@@ -88,7 +86,7 @@ status(){
 }
 
 terminate() {
-	echo -e "\e[00;31mTerminating Liferay\e[00m"
+	echo -e "\n\e[00;31mTerminating Liferay\e[00m"
 	kill -9 $(tomcat_pid)
 }
 
@@ -96,30 +94,36 @@ stop() {
   pid=$(tomcat_pid)
   if [ -n "$pid" ]
   then
-    echo -e "\e[00;31mStoping Tomcat\e[00m"
-    #/bin/su -p -s /bin/sh $TOMCAT_USER
-        sh $CATALINA_HOME/bin/shutdown.sh
+    echo -e "\e[00;31mStopping Tomcat\e[00m"
+    sh $CATALINA_HOME/bin/shutdown.sh
  
-    let kwait=$SHUTDOWN_WAIT
-    count=0;
-    until [ `ps -p $pid | grep -c $pid` = '0' ] || [ $count -gt $kwait ]
-    do
-      echo -n -e "\n\e[00;31mwaiting for processes to exit\e[00m";
-      sleep 1
-      let count=$count+1;
-    done
-
-	while [ 0 = "$st1" ]; do st1=`grep -cF 'org.apache.coyote.AbstractProtocol.destroy Destroying ProtocolHandler ["ajp-nio-8009"]' $LIFERAY_HOME/tomcat-8.0.32/logs/catalina.out` && echo "waiting for shutdown to complete"; done
-
-	echo "Shutdown now complete"
-	echo "Removing Old Log files"
-	rm -rf $LIFERAY_HOME/tomcat-8.0.32/logs
-	mkdir -p $LIFERAY_HOME/tomcat-8.0.32/logs
+    if [ -e $LIFERAY_HOME/tomcat-8.0.32/logs/catalina.out ]
+    then
+	  echo -e "\e[00;32mCheck and wait for tomcat shutdown\e[00m"
+      count=0
+	  res=0
+	  until [ 1 = $res ]||[ $count -gt $SHUTDOWN_WAIT ]
+	  do
+		   echo -e "\e[00;31mwaiting for shutdown to complete\e[00m"
+		   res=$(grep -cF 'org.apache.coyote.AbstractProtocol.destroy Destroying ProtocolHandler ["ajp-nio-8009"]' $LIFERAY_HOME/tomcat-8.0.32/logs/catalina.out)
+		   sleep 1
+		   let count=$count+1;
+	  done
+      if [ $count -gt $SHUTDOWN_WAIT ]
+	  then
+     	  echo -e "\e[00;32mShutdown now complete\e[00m"
+	      echo -e "\e[00;32mRemoving Old Log files\e[00m"
+     	  rm -rf $LIFERAY_HOME/tomcat-8.0.32/logs
+	      mkdir -p $LIFERAY_HOME/tomcat-8.0.32/logs
+      fi
+	fi
  
-#    if [ $count -gt $kwait ]; then
-#      echo -n -e "\n\e[00;31mkilling processes didn't stop after $SHUTDOWN_WAIT seconds\e[00m"
-#      terminate
-#    fi
+
+    pid=$(tomcat_pid)
+    if [ -n "$pid" ]; then
+      echo -e "\n\e[00;31mLiferay did not shutdown gracefully.\e[00m"
+      terminate
+    fi
   else
     echo -e "\e[00;31mLiferay is not running\e[00m"
   fi
