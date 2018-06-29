@@ -91,6 +91,17 @@ RUN \
 	&& sh $TOOL_HOME/scripts/liferay-first-startup.sh
 	
 
+ENV JPDA_TRANSPORT="dt_socket"
+ENV JPDA_ADDRESS="8000"
+ENV JPDA_SUSPEND="n"
+ENV JPDA_OPTS="-agentlib:jdwp=transport=$JPDA_TRANSPORT,address=$JPDA_ADDRESS,server=y,suspend=$JPDA_SUSPEND"
+
+#Adding liferay as a service
+RUN \
+	sudo cp /home/user/Tools/scripts/liferay /etc/init.d/ \
+	&& sudo chmod +x /etc/init.d/liferay
+
+
 ENTRYPOINT ["start"]
 
 #Expose port 8080 of tomcat, port 3306 of mysql and port 9200, 9300 of elastic search
