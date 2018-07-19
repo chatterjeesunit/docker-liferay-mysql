@@ -69,7 +69,7 @@ start() {
 	   sudo service mysql start   
 	   sudo service mysql status
 	done
-    sh $CATALINA_HOME/bin/catalina.sh jpda run
+    sh $CATALINA_HOME/bin/catalina.sh jpda start
     status
   fi
   return 0
